@@ -192,13 +192,14 @@ import CSwiftIO
         csPin: DigitalOut? = nil,
         CPOL: Bool = false,
         CPHA: Bool = false,
-        bitOrder: BitOrder = .MSB
+        bitOrder: BitOrder = .MSB,
+        wordLength: WordLength = .eightBits
 
     ) {
         self.id = idName.value
         self.speed = Int32(speed)
         self.csPin = csPin
-        self.operation = .eightBits
+        self.operation = Operation()
 
         if CPOL {
             operation.insert(.CPOL)
@@ -217,6 +218,13 @@ import CSwiftIO
             operation.insert(.LSB)
         }
 
+        switch wordLength {
+        case .eightBits:
+            operation.insert(.eightBits)
+        case .thirtyTwoBits:
+            operation.insert(.thirtyTwoBits)
+        }
+
         if let ptr = swifthal_spi_open(id, self.speed, operation.rawValue, nil, nil) {
             if let cs = csPin {
                 cs.setMode(.pushPull)
@@ -227,8 +235,8 @@ import CSwiftIO
             fatalError("SPI \(idName.value) init failed!")
         }
 
-        var syncByte: UInt8 = 0
-        swifthal_spi_read(obj, &syncByte, 1)
+        var syncWord: UInt32 = 0
+        swifthal_spi_read(obj, &syncWord, wordLength == .eightBits ? 1 : 4)
     }
 
     deinit {
@@ -619,6 +627,13 @@ extension SPI {
         case LSB
     }
 
+    public enum WordLength {
+        /// Read/write data in 8-bit words
+        case eightBits
+        /// Read/write data in 32-bit words
+        case thirtyTwoBits
+    }
+
     private struct Operation: OptionSet {
         let rawValue: UInt16
 
@@ -627,6 +642,7 @@ extension SPI {
         static let MSB          = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_MSB))
         static let LSB          = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_LSB))
 
-        static let eightBits    = Operation(rawValue: 8 << 5)
+        static let eightBits    = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_8_BITS))
+        static let thirtyTwoBits = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_32_BITS))
     }
 }
