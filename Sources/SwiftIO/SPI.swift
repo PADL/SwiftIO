@@ -201,8 +201,8 @@ import CSwiftIO
         CPOL: Bool = false,
         CPHA: Bool = false,
         bitOrder: BitOrder = .MSB,
-        wordLength: WordLength = .eightBits
-
+        wordLength: WordLength = .eightBits,
+        loopback: Bool = false
     ) {
         self.id = idName.value
         self.speed = Int32(speed)
@@ -231,6 +231,10 @@ import CSwiftIO
             operation.insert(.eightBits)
         case .thirtyTwoBits:
             operation.insert(.thirtyTwoBits)
+        }
+
+        if loopback {
+            operation.insert(.loopback)
         }
 
         if let ptr = swifthal_spi_open(id, self.speed, operation.rawValue, nil, nil) {
@@ -647,6 +651,7 @@ extension SPI {
 
         static let CPOL         = Operation(rawValue: UInt16(SWIFT_SPI_MODE_CPOL))
         static let CPHA         = Operation(rawValue: UInt16(SWIFT_SPI_MODE_CPHA))
+        static let loopback     = Operation(rawValue: UInt16(SWIFT_SPI_MODE_LOOP))
         static let MSB          = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_MSB))
         static let LSB          = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_LSB))
 
