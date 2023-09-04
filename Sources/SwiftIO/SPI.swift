@@ -171,6 +171,14 @@ import CSwiftIO
         return csPin != nil
     }
 
+     /// Word length set at initialization
+    public var wordLength: WordLength {
+        if operation.contains(.thirtyTwoBits) {
+            return .thirtyTwoBits
+        } else {
+            return .eightBits
+        }
+    }
 
      /// Initializes a specified interface for SPI communication as a master device.
      ///
