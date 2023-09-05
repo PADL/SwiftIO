@@ -112,7 +112,7 @@ int swifthal_uart_stop_bits_set(void *uart, swift_uart_stop_bits_t stop_bits);
  * @retval 0 If successful.
  * @retval Negative errno code if failure.
  */
-int swifthal_swift_uart_data_bits_set(void *uart, swift_uart_stop_bits_t data_bits);
+int swifthal_uart_data_bits_set(void *uart, swift_uart_data_bits_t data_bits);
 
 /**
  * @brief Get uart config information
