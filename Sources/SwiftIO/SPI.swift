@@ -154,6 +154,9 @@ import CSwiftIO
     public var LSB: Bool {
         operation.contains(.LSB)
     }
+    public var loopback: Bool {
+        operation.contains(.loopback)
+    }
     public var bitOrder: BitOrder {
         if operation.contains(.MSB) {
             return .MSB
