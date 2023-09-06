@@ -135,7 +135,7 @@ import CSwiftIO
  Therefore, you can directly read temperature using the predefined APIs.
 
  */
- public final class SPI {
+ public final class SPI: CustomStringConvertible {
     private let id: Int32
     public let obj: UnsafeMutableRawPointer
 
@@ -168,6 +168,10 @@ import CSwiftIO
     @usableFromInline
     var csPin: DigitalOut?
 
+
+    public var description: String {
+        "\(type(of: self))(id: \(id), speed: \(speed), CPOL: \(CPOL), CPHA: \(CPHA), bitOrder: \(bitOrder), cs: \(cs))"
+    }
 
      /// A boolean value that tells whether the cs pin is set (true) or not (false).
     public var cs: Bool {
