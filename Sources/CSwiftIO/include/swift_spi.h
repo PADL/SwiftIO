@@ -13,7 +13,6 @@
 #define SWIFT_SPI_TRANSFER_MSB                  (0)
 #define SWIFT_SPI_TRANSFER_LSB                  (1 << 4)
 #define SWIFT_SPI_TRANSFER_8_BITS       (1 << 5)
-#define SWIFT_SPI_TRANSFER_32_BITS      (1 << 6)
 
 /**
  * @brief Open a spi

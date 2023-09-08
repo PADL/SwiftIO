@@ -178,15 +178,6 @@ import CSwiftIO
         return csPin != nil
     }
 
-     /// Word length set at initialization
-    public var wordLength: WordLength {
-        if operation.contains(.thirtyTwoBits) {
-            return .thirtyTwoBits
-        } else {
-            return .eightBits
-        }
-    }
-
      /// Initializes a specified interface for SPI communication as a master device.
      ///
      /// - Parameters:
@@ -208,13 +199,12 @@ import CSwiftIO
         CPOL: Bool = false,
         CPHA: Bool = false,
         bitOrder: BitOrder = .MSB,
-        wordLength: WordLength = .eightBits,
         loopback: Bool = false
     ) {
         self.id = idName.value
         self.speed = Int32(speed)
         self.csPin = csPin
-        self.operation = Operation()
+        self.operation = .eightBits
 
         if CPOL {
             operation.insert(.CPOL)
@@ -233,13 +223,6 @@ import CSwiftIO
             operation.insert(.LSB)
         }
 
-        switch wordLength {
-        case .eightBits:
-            operation.insert(.eightBits)
-        case .thirtyTwoBits:
-            operation.insert(.thirtyTwoBits)
-        }
-
         if loopback {
             operation.insert(.loopback)
         }
@@ -254,8 +237,8 @@ import CSwiftIO
             fatalError("SPI \(idName.value) init failed!")
         }
 
-        var syncWord: UInt32 = 0
-        swifthal_spi_read(obj, &syncWord, wordLength == .eightBits ? 1 : 4)
+        var syncByte: UInt8 = 0
+        swifthal_spi_read(obj, &syncByte, 1)
     }
 
     deinit {
@@ -646,13 +629,6 @@ extension SPI {
         case LSB
     }
 
-    public enum WordLength {
-        /// Read/write data in 8-bit words
-        case eightBits
-        /// Read/write data in 32-bit words
-        case thirtyTwoBits
-    }
-
     private struct Operation: OptionSet {
         let rawValue: UInt16
 
@@ -663,6 +639,5 @@ extension SPI {
         static let LSB          = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_LSB))
 
         static let eightBits    = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_8_BITS))
-        static let thirtyTwoBits = Operation(rawValue: UInt16(SWIFT_SPI_TRANSFER_32_BITS))
     }
 }
